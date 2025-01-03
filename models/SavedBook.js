@@ -1,27 +1,16 @@
+// models/SavedBook.js
 import mongoose from "mongoose";
 
 const savedBookSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // Reference to the User model
-        required: true,
-      },
-      
-    title: { type: String, required: true },
-    author: { type: String, required: true },
-    isbn: { type: String, required: true,},
-    cover: { type: String }, // URL for the book's cover image
-    publish_year: {type: String},
-    editions: [
-      {
-        key: { type: String },
-        title: { type: String },
-        ebook_access: { type: String },
-        isbn: { type: String },
-        language: { type: String },
-      },
-    ],
-    savedAt: { type: Date, default: Date.now }, // Date when the book was saved
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  title: { type: String, required: true },
+  author: { type: String, required: true },
+  isbn: { type: String },
+  cover: { type: String },
+  publish_year: { type: String },
+  description: { type: String },
+  ebook_access: { type: String },
+  savedAt: { type: Date, default: Date.now },
 });
 
 // Compound index: Unique `isbn` per `userId`

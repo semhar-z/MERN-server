@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 
 const connectionString = "mongodb+srv://zesemy:Heran%402023@mongopractice.7e8lj.mongodb.net/";
 
+// const connectionString = process.env.MANGO_URI;
+
 const db = async () => {
   try {
     const conn = await mongoose.connect(connectionString);
@@ -15,3 +17,5 @@ const db = async () => {
 };
 
 export default db;
+
+

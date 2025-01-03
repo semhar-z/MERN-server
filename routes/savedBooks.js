@@ -6,32 +6,32 @@ import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Save a book to the database
 router.post("/save", authMiddleware, async (req, res) => {
-    const { title, author, isbn, cover, publish_year, editions } = req.body;
-   
-
+    const { title, author, isbn, cover, publish_year, description, ebook_access } = req.body;
+  
     if (!title || !author) {
-        return res.status(400).json({ success: false, message: "Title and author are required." });
+      return res.status(400).json({ success: false, message: "Title and author are required." });
     }
-
+  
     try {
-        // Check if the ISBN already exists for the user
-    const existingBook = await SavedBook.findOne({ userId: req.user.id, title, author,});
-    if (existingBook) {
-      return res.status(400).json({
-        success: false,
-        message: "This book has already been saved.",
+      const newBook = new SavedBook({
+        userId: req.user.id,
+        title,
+        author,
+        isbn,
+        cover,
+        publish_year,
+        description,
+        ebook_access,
       });
-    }
-        const newBook = new SavedBook({ userId: req.user.id, title, author, isbn, cover, publish_year, editions });
-        await newBook.save();
-        res.status(201).json({ success: true, data: newBook });
+  
+      await newBook.save();
+      res.status(201).json({ success: true, data: newBook });
     } catch (error) {
-        console.error("Error saving book:", error.message);
-        res.status(500).json({ success: false, message: "Server Error" });
+      console.error("Error saving book:", error.message);
+      res.status(500).json({ success: false, message: "Server Error." });
     }
-});
+  });
 
 // Retrieve all saved books
 router.get("/all", authMiddleware, async (req, res) => {

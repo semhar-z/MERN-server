@@ -4,7 +4,7 @@ import axios from "axios";
 
 const router = express.Router();
 
-// Search books for kids learning to read with pagination
+// Search books for kids with pagination
 router.get("/search", async (req, res) => {
     const { query = "", page = 1, limit = 10 } = req.query;
 
@@ -20,10 +20,11 @@ router.get("/search", async (req, res) => {
     const limitNum = parseInt(limit, 10) || 10;
 
     try {
-        // Call Open Library API with pagination
+        // Call Open Library API with pagination and include kids-specific keywords
+        const searchQuery = `${query} kids books`;
         const response = await axios.get(`https://openlibrary.org/search.json`, {
             params: {
-                q: `${query} kids reading`,
+                q: searchQuery,
                 page: pageNum,
                 limit: limitNum,
             },
@@ -32,42 +33,16 @@ router.get("/search", async (req, res) => {
         const { docs, numFound } = response.data;
         const totalPages = Math.ceil(numFound / limitNum);
 
-        const books = await Promise.all(
-            docs.map(async (book) => {
-                let editions = [];
-                try {
-                    // Fetch editions for each book from Open Library API
-                    if (book.key) {
-                        const editionResponse = await axios.get(
-                            `https://openlibrary.org${book.key}.json`
-                        );
-                        editions = editionResponse.data?.editions || [];
-                    }
-                } catch (editionError) {
-                    console.warn(
-                        `Failed to fetch editions for book: ${book.key}`,
-                        editionError.message
-                    );
-                }
-
-                return {
-                    title: book.title || "Unknown Title",
-                    author: book.author_name?.join(", ") || "Unknown Author",
-                    publish_year: book.first_publish_year || "Unknown Year",
-                    cover: book.cover_i
-                        ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-                        : null,
-                    key: book.key || null,
-                    editions: editions.map((edition) => ({
-                        key: edition.key || null,
-                        title: edition.title || "Unknown Edition Title",
-                        ebook_access: edition.ebook_access || "no_access",
-                        isbn: edition.isbn?.[0] || null,
-                        language: edition.language?.join(", ") || "Unknown Language",
-                    })),
-                };
-            })
-        );
+        const books = docs.map((book) => ({
+            title: book.title || "Unknown Title",
+            author: book.author_name?.join(", ") || "Unknown Author",
+            publish_year: book.first_publish_year || "Unknown Year",
+            cover: book.cover_i
+                ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+                : "https://via.placeholder.com/128x192?text=No+Image",
+            isbn: book.isbn?.[0] || "Unknown ISBN",
+            description: book.first_sentence?.[0] || "Description not available",
+        }));
 
         res.status(200).json({
             success: true,
