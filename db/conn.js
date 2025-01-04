@@ -1,4 +1,3 @@
-//db/conn.js
 import mongoose from "mongoose";
 
 const connectionString = "mongodb+srv://zesemy:Heran%402023@mongopractice.7e8lj.mongodb.net/";

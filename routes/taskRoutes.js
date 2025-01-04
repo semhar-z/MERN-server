@@ -1,4 +1,3 @@
-// routes/taskRoutes.js
 import express from "express";
 import Task from "../models/Task.js";
 import authMiddleware from "../middleware/authMiddleware.js";
