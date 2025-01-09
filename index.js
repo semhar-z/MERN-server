@@ -20,8 +20,8 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 const corsOptions = {
-    // origin: "http://localhost:5173", // Replace with your frontend URL
-    origin: "https://mern-client-dmny.onrender.com", // Your frontend URL
+    // origin: "http://localhost:5173", // Local frontend URL
+    origin: "https://mern-client-dmny.onrender.com", // Deployed frontend URL
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Allow cookies or authorization headers
 };
